@@ -1,5 +1,5 @@
 export interface Filter{
     [key: string]:number | undefined,
-    genreId?: number
+    genre_id?: number
     artist_id?: number
 }
