@@ -26,11 +26,16 @@ class ArtistController{
 
     async listByGenreId(request: Request<{},{},{},Filter>, response: Response){
         const {query} = request;
+
+        if(!query.genre_id || isNaN(query.genre_id)){
+            response.status(400).send("Error: genre_id is not specified!")
+            return
+        }
+
         const filter: Filter = {
-            genreId: query.genreId,
+            genre_id: query.genre_id,
         };
 
-        /**DB Query*/
         try{
             const artists = await Artist.findAll({
                 include: {
@@ -41,7 +46,7 @@ class ArtistController{
                         attributes: [],
                         model: Track,
                         required: true,
-                        include: [{attributes: [], model: Genre, required: true, where: {GenreId: filter.genreId??null}}]
+                        include: [{attributes: [], model: Genre, required: true, where: {GenreId: filter.genre_id}}]
                     }]
                 },
                 group: "artist.Name",
@@ -62,8 +67,8 @@ class ArtistController{
         
         const {query} = request;
         
-        if(!query.artist_id){
-            response.status(400).send('Error: artist_id is not specified')
+        if(!query.artist_id || isNaN(query.artist_id)){
+            response.status(400).send('Error: artist_id is not correctly specified!')
             return;
         }
 
@@ -90,6 +95,25 @@ class ArtistController{
             response.status(500).send(`Internal server error: ${error}`)
             console.log('Error: ',error);
         })
+
+    }
+
+
+    getArtistAlbums(request: Request<{},{},{},Filter>, response: Response){
+
+        const {query} = request;
+
+        if(!query.artist_id || isNaN(query.artist_id)){
+            response.status(400).send('Error: artist_id is not correctly specified!')
+            return;
+        }
+
+        Album.findAll({
+            where:{ArtistId: query.artist_id,}
+        }).then( albums =>{
+            response.send(albums);
+        }).catch(error => response.status(500).send(`Internal server error: ${error}`));
+
 
     }
 }

@@ -7,5 +7,6 @@ const Controller = new ArtistController()
 Router.get('/listAll', Controller.getAllArtist);
 Router.get('/listByGenreId', Controller.listByGenreId);
 Router.get('/countMusicTracks', Controller.countMusicTracks);
+Router.get('/getArtistAlbums', Controller.getArtistAlbums);
 
 export default Router;
